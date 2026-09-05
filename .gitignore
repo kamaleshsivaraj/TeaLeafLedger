@@ -1,0 +1,31 @@
+# Secrets - never commit these
+v1/.env
+*.env.local
+
+# Backend
+v1/backend/target/
+v1/backend/backend-run.log
+v1/backend-run.log
+v1/backend/.vscode/
+v1/backend/.idea/
+*.class
+*.log
+
+# Frontend
+v1/frontend/node_modules/
+v1/frontend/dist/
+v1/frontend/.vite/
+v1/frontend/node_modules/.vite/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Misc
+logs/
+*.tmp

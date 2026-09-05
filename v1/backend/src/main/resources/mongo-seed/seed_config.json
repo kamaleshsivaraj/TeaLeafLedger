@@ -1,0 +1,34 @@
+[
+  {
+    "appName": "TeaLeafLedger",
+    "version": "1.0.0",
+    "currency": "LKR",
+    "currencySymbol": "Rs.",
+    "locale": "en-LK",
+    "weighingPrecision": 1,
+    "bagTareWeight": 1.0,
+    "defaultAdvanceRecovery": 200,
+    "taxConfig": {
+      "taxType": "NONE",
+      "cgst": 0,
+      "sgst": 0,
+      "igst": 0
+    },
+    "factories": [
+      {
+        "name": "Kelani Valley Tea Factory",
+        "location": "Kelaniya",
+        "contact": "011-2910000"
+      }
+    ],
+    "divisions": [
+      "Kegalle Division",
+      "Rambukkana"
+    ],
+    "leafGrades": [
+      "Standard green leaf",
+      "Premium green leaf",
+      "Rejected leaf"
+    ]
+  }
+]

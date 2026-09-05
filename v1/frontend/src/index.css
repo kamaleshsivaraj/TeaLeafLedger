@@ -1,0 +1,224 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-gray-200;
+  }
+  body {
+    @apply bg-gray-50 text-gray-900 antialiased font-sans;
+  }
+  .dark {
+    color-scheme: dark;
+  }
+  .dark body {
+    @apply bg-gray-950 text-gray-100;
+  }
+  .dark * {
+    @apply border-gray-800;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-brand-600 hover:bg-brand-700 text-white font-medium px-4 py-2 rounded-lg transition-colors duration-150;
+  }
+  .btn-secondary {
+    @apply bg-white hover:bg-gray-50 text-gray-700 font-medium px-4 py-2 rounded-lg border border-gray-300 transition-colors duration-150;
+  }
+  .dark .btn-secondary {
+    @apply bg-gray-800 hover:bg-gray-700 text-gray-200 border-gray-700;
+  }
+  .btn-danger {
+    @apply bg-red-600 hover:bg-red-700 text-white font-medium px-4 py-2 rounded-lg transition-colors duration-150;
+  }
+  .input-field {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500;
+  }
+  .dark .input-field {
+    @apply bg-gray-800 border-gray-700 text-gray-100;
+  }
+  .select-field {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500;
+  }
+  .dark .select-field {
+    @apply bg-gray-800 border-gray-700 text-gray-100;
+  }
+  .card {
+    @apply bg-white rounded-xl border border-gray-200 p-6;
+  }
+  .dark .card {
+    @apply bg-gray-900 border-gray-800;
+  }
+  .stat-card {
+    @apply bg-white rounded-xl border border-gray-200 p-5;
+  }
+  .dark .stat-card {
+    @apply bg-gray-900 border-gray-800;
+  }
+  .pill {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+  .pill-green {
+    @apply pill bg-green-100 text-green-800;
+  }
+  .dark .pill-green {
+    @apply bg-green-900/40 text-green-300;
+  }
+  .pill-amber {
+    @apply pill bg-amber-100 text-amber-800;
+  }
+  .dark .pill-amber {
+    @apply bg-amber-900/40 text-amber-300;
+  }
+  .pill-gray {
+    @apply pill bg-gray-100 text-gray-800;
+  }
+  .dark .pill-gray {
+    @apply bg-gray-800 text-gray-300;
+  }
+  .pill-red {
+    @apply pill bg-red-100 text-red-800;
+  }
+  .dark .pill-red {
+    @apply bg-red-900/40 text-red-300;
+  }
+  .table-container {
+    @apply bg-white rounded-xl border border-gray-200 overflow-hidden;
+  }
+  .dark .table-container {
+    @apply bg-gray-900 border-gray-800;
+  }
+  .table-container table {
+    @apply w-full;
+  }
+  .table-container thead {
+    @apply bg-gray-50;
+  }
+  .dark .table-container thead {
+    @apply bg-gray-800;
+  }
+  .table-container th {
+    @apply px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider;
+  }
+  .dark .table-container th {
+    @apply text-gray-400;
+  }
+  .table-container td {
+    @apply px-4 py-3 text-sm;
+  }
+  .table-container tbody tr {
+    @apply border-t border-gray-100 hover:bg-gray-50;
+  }
+  .dark .table-container tbody tr {
+    @apply border-gray-800 hover:bg-gray-800/60;
+  }
+  .sidebar-link {
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150;
+  }
+  .sidebar-link.active {
+    @apply bg-brand-50 text-brand-700;
+  }
+  .dark .sidebar-link.active {
+    @apply bg-brand-900/40 text-brand-300;
+  }
+  .sidebar-link:not(.active) {
+    @apply text-gray-600 hover:bg-gray-100 hover:text-gray-900;
+  }
+  .dark .sidebar-link:not(.active) {
+    @apply text-gray-400 hover:bg-gray-800 hover:text-gray-100;
+  }
+}
+
+/* Receipt printing */
+#print-root {
+  display: none;
+}
+
+@media print {
+  body.print-receipt > #root {
+    display: none !important;
+  }
+
+  body.print-receipt > #print-root {
+    display: block !important;
+  }
+
+  body.print-receipt .print-only-receipt {
+    display: block !important;
+    width: 72mm;
+    margin: 0 auto;
+    padding: 0;
+    color: #000;
+    background: #fff;
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    font-size: 11px;
+    line-height: 1.5;
+  }
+
+  body.print-receipt .print-only-receipt .rc-center {
+    text-align: center;
+  }
+  body.print-receipt .print-only-receipt .rc-logo {
+    font-size: 18px;
+    line-height: 1;
+    margin: 0 0 1mm;
+  }
+  body.print-receipt .print-only-receipt .rc-title {
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    margin: 0;
+  }
+  body.print-receipt .print-only-receipt .rc-sub {
+    font-size: 10px;
+    color: #333;
+    margin: 0;
+  }
+  body.print-receipt .print-only-receipt .rc-foot {
+    font-size: 9px;
+    color: #555;
+    margin: 1mm 0 0;
+  }
+  body.print-receipt .print-only-receipt .rc-divider {
+    border-top: 1px dashed #000;
+    margin: 2mm 0;
+  }
+  body.print-receipt .print-only-receipt .rc-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 0.5mm 0;
+  }
+  body.print-receipt .print-only-receipt .rc-row span:first-child {
+    color: #222;
+  }
+  body.print-receipt .print-only-receipt .rc-row span:last-child {
+    font-weight: 600;
+    text-align: right;
+  }
+  body.print-receipt .print-only-receipt .rc-strong span:last-child {
+    font-weight: 800;
+  }
+  body.print-receipt .print-only-receipt .rc-section {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-bottom: 1px solid #000;
+    padding: 1mm 0 0.5mm;
+    margin: 0;
+  }
+  body.print-receipt .print-only-receipt .rc-total {
+    padding: 1.5mm 0 0;
+  }
+  body.print-receipt .print-only-receipt .rc-total span {
+    font-size: 13px;
+    font-weight: 900;
+  }
+
+  body.print-receipt.print-without-amount .print-only-receipt .pwa {
+    display: none !important;
+  }
+}

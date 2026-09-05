@@ -1,0 +1,62 @@
+[
+  {
+    "name": "K. Suresh",
+    "code": "TF-1042",
+    "phone": "077 234 5678",
+    "division": "Kegalle Division",
+    "status": "active",
+    "monthlyLeaf": 362.5,
+    "advanceBalance": 8500,
+    "lastCollection": "20 Aug 2026"
+  },
+  {
+    "name": "P. Nadeesha",
+    "code": "TF-1043",
+    "phone": "077 345 6789",
+    "division": "Rambukkana",
+    "status": "inactive",
+    "monthlyLeaf": 285.0,
+    "advanceBalance": 4200,
+    "lastCollection": "18 Aug 2026"
+  },
+  {
+    "name": "R. Arul",
+    "code": "TF-1044",
+    "phone": "077 456 7890",
+    "division": "Kegalle Division",
+    "status": "active",
+    "monthlyLeaf": 410.5,
+    "advanceBalance": 6250,
+    "lastCollection": "19 Aug 2026"
+  },
+  {
+    "name": "S. Perera",
+    "code": "TF-1045",
+    "phone": "077 567 8901",
+    "division": "Rambukkana",
+    "status": "active",
+    "monthlyLeaf": 328.0,
+    "advanceBalance": 3500,
+    "lastCollection": "20 Aug 2026"
+  },
+  {
+    "name": "A. Kumar",
+    "code": "TF-1046",
+    "phone": "077 678 9012",
+    "division": "Kegalle Division",
+    "status": "inactive",
+    "monthlyLeaf": 195.5,
+    "advanceBalance": 2100,
+    "lastCollection": "16 Aug 2026"
+  },
+  {
+    "name": "M. Fernando",
+    "code": "TF-1047",
+    "phone": "077 789 0123",
+    "division": "Rambukkana",
+    "status": "active",
+    "monthlyLeaf": 450.0,
+    "advanceBalance": 7800,
+    "lastCollection": "20 Aug 2026"
+  }
+]

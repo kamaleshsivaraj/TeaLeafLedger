@@ -1,0 +1,66 @@
+server:
+  port: 8090
+
+spring:
+  application:
+    name: tealeafledger-api
+
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/tealeafledger}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+  data:
+    mongodb:
+      uri: ${MONGO_URI:mongodb://localhost:27017/tealeafledger_seed}
+      database: tealeafledger_seed
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+
+  mail:
+    host: ${GMAIL_HOST:smtp.gmail.com}
+    port: ${GMAIL_PORT:587}
+    username: ${GMAIL_USER_MAIL:}
+    password: ${GMAIL_USER_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+jwt:
+  secret: TeaLeafLedger2026SecretKeyForJWTTokenGenerationMustBeLongEnough!
+  expiration: 86400000
+
+app:
+  cors:
+    allowed-origins: http://localhost:5183,http://localhost:3000
+  sms:
+    provider: ${SMS_PROVIDER:}
+    api-key: ${SMS_API_KEY:}
+    sender-id: ${SMS_SENDER_ID:TeaLeaf}
+  support-email: ${GMAIL_FROM_MAIL:${GMAIL_USER_MAIL:}}
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
