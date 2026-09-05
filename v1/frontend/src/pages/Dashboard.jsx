@@ -1,9 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { collectionAPI, financeAPI, farmerAPI, deliveryAPI } from '../api/client';
+import { usePermissions } from '../context/PermissionContext';
 import { Scale, DollarSign, Users, Truck, TrendingUp, ArrowRight } from 'lucide-react';
 
 export default function Dashboard() {
+  const { canView } = usePermissions();
+  const canCollections = canView('COLLECTION');
+  const canFarmers = canView('FARMERS');
+  const canDeliveries = canView('DELIVERIES');
+  const canFinance = canView('FINANCE');
   const [stats, setStats] = useState({ collections: 0, totalKg: 0, totalValue: 0, farmers: 0, deliveries: 0 });
   const [recent, setRecent] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -11,18 +17,26 @@ export default function Dashboard() {
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [canView]);
 
   const loadData = async () => {
+    setLoading(true);
     try {
-      const [colRes, farmerRes, delRes, finRes] = await Promise.all([
-        collectionAPI.getAll(),
-        farmerAPI.getAll(),
-        deliveryAPI.getAll(),
-        financeAPI.getSummary(),
-      ]);
+      const jobs = [];
+      if (canCollections) jobs.push(collectionAPI.getAll());
+      if (canFarmers) jobs.push(farmerAPI.getAll());
+      if (canDeliveries) jobs.push(deliveryAPI.getAll());
+      if (canFinance) jobs.push(financeAPI.getSummary());
 
-      const collections = colRes.data || [];
+      const settled = await Promise.allSettled(jobs);
+      const values = settled.map((r) => (r.status === 'fulfilled' ? r.value.data : null));
+      let idx = 0;
+
+      const collections = canCollections ? (values[idx++] || []) : [];
+      const farmers = canFarmers ? (values[idx++] || []) : [];
+      const deliveries = canDeliveries ? (values[idx++] || []) : [];
+      const summary = canFinance ? (values[idx++] || {}) : {};
+
       const totalKg = collections.reduce((sum, c) => sum + (c.weight || 0), 0);
       const totalValue = collections.reduce((sum, c) => sum + (c.amount || 0), 0);
 
@@ -30,8 +44,8 @@ export default function Dashboard() {
         collections: collections.length,
         totalKg,
         totalValue,
-        farmers: (farmerRes.data || []).length,
-        deliveries: (delRes.data || []).length,
+        farmers: farmers.length,
+        deliveries: deliveries.length,
       });
 
       setRecent(collections.slice(-5).reverse());
@@ -54,12 +68,15 @@ export default function Dashboard() {
           <p className="text-sm font-medium text-gray-500">{today}</p>
           <h2 className="text-2xl font-bold text-gray-900">Here's how collection is moving today.</h2>
         </div>
+        {canCollections && (
         <button onClick={() => navigate('/collection')} className="btn-primary flex items-center gap-2">
           + Record collection <ArrowRight size={16} />
         </button>
+      )}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {canCollections && (
         <div className="stat-card">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center"><Scale size={18} className="text-green-600" /></div>
@@ -67,7 +84,9 @@ export default function Dashboard() {
           </div>
           <p className="text-2xl font-bold text-gray-900">{stats.totalKg.toFixed(1)} <span className="text-sm font-normal text-gray-500">kg</span></p>
         </div>
+        )}
 
+        {canCollections && (
         <div className="stat-card">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center"><DollarSign size={18} className="text-amber-600" /></div>
@@ -75,7 +94,9 @@ export default function Dashboard() {
           </div>
           <p className="text-2xl font-bold text-gray-900">{money(stats.totalValue)}</p>
         </div>
+        )}
 
+        {canFarmers && (
         <div className="stat-card">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center"><Users size={18} className="text-blue-600" /></div>
@@ -83,7 +104,9 @@ export default function Dashboard() {
           </div>
           <p className="text-2xl font-bold text-gray-900">{stats.farmers}</p>
         </div>
+        )}
 
+        {canDeliveries && (
         <div className="stat-card">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center"><Truck size={18} className="text-purple-600" /></div>
@@ -91,9 +114,11 @@ export default function Dashboard() {
           </div>
           <p className="text-2xl font-bold text-gray-900">{stats.deliveries}</p>
         </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {canCollections && (
         <div className="card">
           <div className="flex items-center justify-between mb-4">
             <div>
@@ -124,6 +149,7 @@ export default function Dashboard() {
             )}
           </div>
         </div>
+        )}
 
         <div className="card">
           <div className="flex items-center gap-3 mb-4">
@@ -134,24 +160,32 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="space-y-4">
+            {canCollections && (
             <div className="flex justify-between items-center p-3 rounded-lg bg-gray-50">
               <span className="text-sm text-gray-600">Total collections</span>
               <span className="text-sm font-bold text-gray-900">{stats.collections}</span>
             </div>
+            )}
+            {canFarmers && (
             <div className="flex justify-between items-center p-3 rounded-lg bg-gray-50">
               <span className="text-sm text-gray-600">Active suppliers</span>
               <span className="text-sm font-bold text-gray-900">{stats.farmers}</span>
             </div>
+            )}
+            {canDeliveries && (
             <div className="flex justify-between items-center p-3 rounded-lg bg-gray-50">
               <span className="text-sm text-gray-600">Deliveries tracked</span>
               <span className="text-sm font-bold text-gray-900">{stats.deliveries}</span>
             </div>
+            )}
+            {canCollections && (
             <div className="flex justify-between items-center p-3 rounded-lg bg-gray-50">
               <span className="text-sm text-gray-600">Avg weight per collection</span>
               <span className="text-sm font-bold text-gray-900">
                 {stats.collections > 0 ? (stats.totalKg / stats.collections).toFixed(1) : '0.0'} kg
               </span>
             </div>
+            )}
           </div>
         </div>
       </div>

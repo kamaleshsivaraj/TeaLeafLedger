@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { farmerAPI, collectionAPI, rateAPI, financeAPI } from '../api/client';
+import { usePermissions } from '../context/PermissionContext';
 import toast from 'react-hot-toast';
 import { Search, X, Printer, Eye, Table2, Pencil, Trash2 } from 'lucide-react';
 
@@ -11,6 +12,11 @@ printRoot.id = 'print-root';
 document.body.appendChild(printRoot);
 
 export default function Collection() {
+  const { has } = usePermissions();
+  const canCreate = has('COLLECTION', 'CREATE');
+  const canUpdate = has('COLLECTION', 'UPDATE');
+  const canDelete = has('COLLECTION', 'DELETE');
+  const canPrint = has('COLLECTION', 'PRINT');
   const [farmers, setFarmers] = useState([]);
   const [selectedFarmer, setSelectedFarmer] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -540,9 +546,13 @@ export default function Collection() {
               )}
             </div>
 
-            <button type="submit" disabled={loading || !selectedFarmer} className="w-full btn-primary py-2.5">
-              {loading ? 'Saving...' : 'Save collection & issue receipt →'}
-            </button>
+            {canCreate ? (
+              <button type="submit" disabled={loading || !selectedFarmer} className="w-full btn-primary py-2.5">
+                {loading ? 'Saving...' : 'Save collection & issue receipt →'}
+              </button>
+            ) : (
+              <p className="text-center text-sm text-gray-400 bg-gray-50 rounded-lg py-3">You have read-only access — recording collections is not enabled for your role.</p>
+            )}
           </div>
         </form>
 
@@ -596,8 +606,8 @@ export default function Collection() {
             </div>
           </div>
           <div className="p-3 border-t border-gray-200 flex gap-2">
-            <button onClick={() => printReceipt(false)} className="flex-1 btn-secondary text-xs py-2"><Printer size={14} className="inline mr-1" /> Print</button>
-            <button onClick={() => printReceipt(true)} className="flex-1 btn-secondary text-xs py-2"><Printer size={14} className="inline mr-1" /> Print w/o amount</button>
+            {canPrint && <button onClick={() => printReceipt(false)} className="flex-1 btn-secondary text-xs py-2"><Printer size={14} className="inline mr-1" /> Print</button>}
+            {canPrint && <button onClick={() => printReceipt(true)} className="flex-1 btn-secondary text-xs py-2"><Printer size={14} className="inline mr-1" /> Print w/o amount</button>}
           </div>
         </div>
       </div>
@@ -697,8 +707,8 @@ export default function Collection() {
                           <td className="py-2 pr-4 text-right font-semibold">{money(c.amount)}</td>
                           <td className="py-2 text-center">
                             <div className="flex justify-center gap-1.5">
-                              <button onClick={() => openEdit(c)} title="Edit collection" className="p-1.5 rounded-lg text-brand-600 bg-brand-50 hover:bg-brand-100"><Pencil size={14} /></button>
-                              <button onClick={() => setDeleting(c)} title="Delete collection" className="p-1.5 rounded-lg text-red-600 bg-red-50 hover:bg-red-100"><Trash2 size={14} /></button>
+                              {canUpdate && <button onClick={() => openEdit(c)} title="Edit collection" className="p-1.5 rounded-lg text-brand-600 bg-brand-50 hover:bg-brand-100"><Pencil size={14} /></button>}
+                              {canDelete && <button onClick={() => setDeleting(c)} title="Delete collection" className="p-1.5 rounded-lg text-red-600 bg-red-50 hover:bg-red-100"><Trash2 size={14} /></button>}
                             </div>
                           </td>
                         </tr>

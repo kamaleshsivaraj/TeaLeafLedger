@@ -2,6 +2,8 @@ package com.tealeafledger.controller;
 
 import com.tealeafledger.entity.Collection;
 import com.tealeafledger.service.CollectionService;
+import com.tealeafledger.service.CurrentUserService;
+import com.tealeafledger.service.PermissionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,33 +14,44 @@ import java.util.List;
 public class CollectionController {
 
     private final CollectionService collectionService;
+    private final PermissionService permissionService;
+    private final CurrentUserService currentUserService;
 
-    public CollectionController(CollectionService collectionService) {
+    public CollectionController(CollectionService collectionService,
+                                PermissionService permissionService,
+                                CurrentUserService currentUserService) {
         this.collectionService = collectionService;
+        this.permissionService = permissionService;
+        this.currentUserService = currentUserService;
     }
 
     @GetMapping
     public ResponseEntity<List<Collection>> getAllCollections() {
+        permissionService.require(currentUserService.currentUser(), "COLLECTION", "VIEW");
         return ResponseEntity.ok(collectionService.getAllCollections());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Collection> getCollectionById(@PathVariable Long id) {
+        permissionService.require(currentUserService.currentUser(), "COLLECTION", "VIEW");
         return ResponseEntity.ok(collectionService.getCollectionById(id));
     }
 
     @PostMapping
     public ResponseEntity<Collection> createCollection(@RequestBody Collection collection) {
+        permissionService.require(currentUserService.currentUser(), "COLLECTION", "CREATE");
         return ResponseEntity.ok(collectionService.createCollection(collection));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Collection> updateCollection(@PathVariable Long id, @RequestBody Collection collection) {
+        permissionService.require(currentUserService.currentUser(), "COLLECTION", "UPDATE");
         return ResponseEntity.ok(collectionService.updateCollection(id, collection));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCollection(@PathVariable Long id) {
+        permissionService.require(currentUserService.currentUser(), "COLLECTION", "DELETE");
         collectionService.deleteCollection(id);
         return ResponseEntity.ok().build();
     }
@@ -47,11 +60,13 @@ public class CollectionController {
     public ResponseEntity<List<Collection>> getCollectionsByDateRange(
             @RequestParam String from,
             @RequestParam String to) {
+        permissionService.require(currentUserService.currentUser(), "COLLECTION", "VIEW");
         return ResponseEntity.ok(collectionService.getCollectionsByDateRange(from, to));
     }
 
     @GetMapping("/farmer/{farmerId}")
     public ResponseEntity<List<Collection>> getCollectionsByFarmer(@PathVariable Long farmerId) {
+        permissionService.require(currentUserService.currentUser(), "COLLECTION", "VIEW");
         return ResponseEntity.ok(collectionService.getCollectionsByFarmer(farmerId));
     }
 }

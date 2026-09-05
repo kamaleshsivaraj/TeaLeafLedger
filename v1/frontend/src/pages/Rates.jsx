@@ -1,9 +1,14 @@
 import { useState, useEffect } from 'react';
 import { rateAPI } from '../api/client';
+import { usePermissions } from '../context/PermissionContext';
 import toast from 'react-hot-toast';
 import { Plus, Edit2, Trash2 } from 'lucide-react';
 
 export default function Rates() {
+  const { has } = usePermissions();
+  const canCreate = has('RATES', 'CREATE');
+  const canUpdate = has('RATES', 'UPDATE');
+  const canDelete = has('RATES', 'DELETE');
   const [rates, setRates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -75,7 +80,7 @@ export default function Rates() {
           <h2 className="text-xl font-bold text-gray-900">Rate management</h2>
           <p className="text-sm text-gray-500">Set the payable rate by leaf grade.</p>
         </div>
-        <button onClick={openAdd} className="btn-primary flex items-center gap-2"><Plus size={16} /> Add rate</button>
+        {canCreate && <button onClick={openAdd} className="btn-primary flex items-center gap-2"><Plus size={16} /> Add rate</button>}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -90,7 +95,7 @@ export default function Rates() {
             <h3 className="font-bold text-gray-900">Rate schedule</h3>
             <p className="text-sm text-gray-500">Use edit to amend a rate or its effective date.</p>
           </div>
-          <button onClick={handleReset} className="btn-secondary text-sm">↺ Restore sample rates</button>
+          {(canDelete || canCreate) && <button onClick={handleReset} className="btn-secondary text-sm">↺ Restore sample rates</button>}
         </div>
         <table>
           <thead>
@@ -111,8 +116,8 @@ export default function Rates() {
                 <td><span className={r.active ? 'pill-green' : 'pill-gray'}>{r.active ? 'Active' : 'Inactive'}</span></td>
                 <td>
                   <div className="flex items-center gap-2">
-                    <button onClick={() => openEdit(r)} className="p-1.5 rounded hover:bg-gray-100 text-gray-500"><Edit2 size={14} /></button>
-                    <button onClick={() => handleDelete(r.id, r.grade)} className="p-1.5 rounded hover:bg-red-50 text-red-500"><Trash2 size={14} /></button>
+                    {canUpdate && <button onClick={() => openEdit(r)} className="p-1.5 rounded hover:bg-gray-100 text-gray-500"><Edit2 size={14} /></button>}
+                    {canDelete && <button onClick={() => handleDelete(r.id, r.grade)} className="p-1.5 rounded hover:bg-red-50 text-red-500"><Trash2 size={14} /></button>}
                   </div>
                 </td>
               </tr>

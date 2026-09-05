@@ -1,9 +1,14 @@
 import { useState, useEffect } from 'react';
 import { farmerAPI } from '../api/client';
+import { usePermissions } from '../context/PermissionContext';
 import toast from 'react-hot-toast';
 import { Search, X, Plus, Edit2, Trash2 } from 'lucide-react';
 
 export default function Farmers() {
+  const { has } = usePermissions();
+  const canCreate = has('FARMERS', 'CREATE');
+  const canUpdate = has('FARMERS', 'UPDATE');
+  const canDelete = has('FARMERS', 'DELETE');
   const [farmers, setFarmers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -67,7 +72,7 @@ export default function Farmers() {
           <h2 className="text-xl font-bold text-gray-900">Farmers</h2>
           <p className="text-sm text-gray-500">Manage profiles, passbooks and collection history.</p>
         </div>
-        <button onClick={openAdd} className="btn-primary flex items-center gap-2"><Plus size={16} /> Add farmer</button>
+        {canCreate && <button onClick={openAdd} className="btn-primary flex items-center gap-2"><Plus size={16} /> Add farmer</button>}
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
@@ -119,8 +124,8 @@ export default function Farmers() {
                 <td className="font-medium">Rs. {Number(f.advanceBalance || 0).toLocaleString()}</td>
                 <td>
                   <div className="flex items-center gap-2">
-                    <button onClick={() => openEdit(f)} className="p-1.5 rounded hover:bg-gray-100 text-gray-500"><Edit2 size={14} /></button>
-                    <button onClick={() => handleDelete(f.id, f.name)} className="p-1.5 rounded hover:bg-red-50 text-red-500"><Trash2 size={14} /></button>
+                    {canUpdate && <button onClick={() => openEdit(f)} className="p-1.5 rounded hover:bg-gray-100 text-gray-500"><Edit2 size={14} /></button>}
+                    {canDelete && <button onClick={() => handleDelete(f.id, f.name)} className="p-1.5 rounded hover:bg-red-50 text-red-500"><Trash2 size={14} /></button>}
                   </div>
                 </td>
               </tr>
@@ -158,6 +163,9 @@ export default function Farmers() {
             </form>
           </div>
         </div>
+      )}
+      {!canCreate && !canUpdate && (
+        <p className="text-sm text-gray-400 text-center py-2">You have read-only access to farmers.</p>
       )}
     </div>
   );

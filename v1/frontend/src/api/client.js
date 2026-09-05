@@ -55,6 +55,18 @@ export const userAPI = {
   remove: (id) => api.delete(`/users/${id}`),
 };
 
+export const permissionAPI = {
+  getModules: () => api.get('/permissions/modules'),
+  getMatrix: (role) => api.get(`/permissions/${role}`),
+  updateMatrix: (role, matrix) => api.put(`/permissions/${role}`, matrix),
+};
+
+export const settingsAPI = {
+  getDayStatus: () => api.get('/settings/day-status'),
+  getDayStatusHistory: () => api.get('/settings/day-status/history'),
+  updateDayStatus: (status) => api.put('/settings/day-status', { status }),
+};
+
 export const notificationAPI = {
   getAll: () => api.get('/notifications'),
   getUnreadCount: () => api.get('/notifications/unread-count'),

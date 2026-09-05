@@ -28,10 +28,10 @@ Workflow chain
 Auth (JWT) → Dashboard → Farmers → Daily Collection (6 steps) → Rates → Payments/Advances → Factory Deliveries → Reports
 
 
-1)in sidebar the collection day open green light is showing know i want that a small section for only let it be closed/opened/halfday/weekoff kind i want 
-2)create Roles & permissions Define what each role can do across modules and buttons. Permissions gate who can access the button like read, write, view.
-3)create a module Privileges Roles & tab access
-The ADMIN super-role always has full access and cannot be modified. Decide which roles can access the modules
+
+# TODO
+
+1. I want visual testing using the Model Context Protocol (MCP) inside the Cursor IDE, which allows an AI agent to control a browser, move the cursor, click elements, and take screenshot if possible take video too using playwright.(for front-end).
 
 
 

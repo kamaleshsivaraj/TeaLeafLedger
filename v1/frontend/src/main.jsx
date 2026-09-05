@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import App from './App'
 import { AuthProvider } from './context/AuthContext'
+import { PermissionProvider } from './context/PermissionContext'
 import { ThemeProvider } from './context/ThemeContext'
 import './index.css'
 
@@ -12,8 +13,10 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <BrowserRouter>
       <ThemeProvider>
         <AuthProvider>
-          <App />
-          <Toaster position="top-right" toastOptions={{ duration: 3000 }} />
+          <PermissionProvider>
+            <App />
+            <Toaster position="top-right" toastOptions={{ duration: 3000 }} />
+          </PermissionProvider>
         </AuthProvider>
       </ThemeProvider>
     </BrowserRouter>

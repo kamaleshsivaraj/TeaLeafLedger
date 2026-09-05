@@ -14,6 +14,7 @@ const pageLabels = {
   '/reports': { eyebrow: 'Insights', title: 'Reports' },
   '/account': { eyebrow: 'Profile & access', title: 'Account & security' },
   '/users': { eyebrow: 'Team management', title: 'Users' },
+  '/privileges': { eyebrow: 'Roles & access control', title: 'Roles & privileges' },
 };
 
 const typePill = {

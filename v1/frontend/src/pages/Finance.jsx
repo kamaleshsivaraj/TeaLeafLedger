@@ -1,9 +1,14 @@
 import { useState, useEffect } from 'react';
 import { financeAPI, farmerAPI } from '../api/client';
+import { usePermissions } from '../context/PermissionContext';
 import toast from 'react-hot-toast';
 import { Plus, Edit2, Trash2 } from 'lucide-react';
 
 export default function Finance() {
+  const { has } = usePermissions();
+  const canCreate = has('FINANCE', 'CREATE');
+  const canUpdate = has('FINANCE', 'UPDATE');
+  const canDelete = has('FINANCE', 'DELETE');
   const [farmers, setFarmers] = useState([]);
   const [summary, setSummary] = useState({ totalAdvances: 0, totalPayments: 0, outstanding: 0 });
   const [ledger, setLedger] = useState([]);
@@ -19,14 +24,18 @@ export default function Finance() {
 
   const loadData = async () => {
     try {
-      const [farmerRes, summaryRes, ledgerRes] = await Promise.all([
-        farmerAPI.getAll(),
-        financeAPI.getSummary(),
-        financeAPI.getLedger({ type: ledgerType, search: ledgerSearch }),
-      ]);
-      setFarmers(farmerRes.data || []);
-      setSummary(summaryRes.data || {});
-      setLedger(ledgerRes.data || []);
+      const jobs = [];
+      if (has('FARMERS', 'VIEW')) jobs.push(farmerAPI.getAll());
+      jobs.push(financeAPI.getSummary());
+      jobs.push(financeAPI.getLedger({ type: ledgerType, search: ledgerSearch }));
+
+      const settled = await Promise.allSettled(jobs);
+      const values = settled.map((r) => (r.status === 'fulfilled' ? r.value.data : null));
+      let idx = 0;
+
+      if (has('FARMERS', 'VIEW')) setFarmers(values[idx++] || []);
+      setSummary(values[idx++] || {});
+      setLedger(values[idx++] || []);
     } catch (err) {
       console.error(err);
     } finally {
@@ -85,8 +94,8 @@ export default function Finance() {
           <p className="text-sm text-gray-500">Manage supplier advances, payments and balances.</p>
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={openAdvance} className="btn-primary flex items-center gap-2"><Plus size={16} /> Record advance</button>
-          <button onClick={openPayment} className="btn-primary flex items-center gap-2"><Plus size={16} /> Record payment</button>
+          {canCreate && <button onClick={openAdvance} className="btn-primary flex items-center gap-2"><Plus size={16} /> Record advance</button>}
+          {canCreate && <button onClick={openPayment} className="btn-primary flex items-center gap-2"><Plus size={16} /> Record payment</button>}
         </div>
       </div>
 
@@ -133,8 +142,8 @@ export default function Finance() {
                 <td className="font-medium">{money(r.amount)}</td>
                 <td>
                   <div className="flex items-center gap-2">
-                    <button onClick={() => { setFormType(r.type); setEditRecord(r); setForm({ farmerId: r.farmerId || '', date: r.date, amount: r.amount, notes: '' }); setShowForm(true); }} className="p-1.5 rounded hover:bg-gray-100 text-gray-500"><Edit2 size={14} /></button>
-                    <button onClick={() => handleDelete(r.type, r.id)} className="p-1.5 rounded hover:bg-red-50 text-red-500"><Trash2 size={14} /></button>
+                    {canUpdate && <button onClick={() => { setFormType(r.type); setEditRecord(r); setForm({ farmerId: r.farmerId || '', date: r.date, amount: r.amount, notes: '' }); setShowForm(true); }} className="p-1.5 rounded hover:bg-gray-100 text-gray-500"><Edit2 size={14} /></button>}
+                    {canDelete && <button onClick={() => handleDelete(r.type, r.id)} className="p-1.5 rounded hover:bg-red-50 text-red-500"><Trash2 size={14} /></button>}
                   </div>
                 </td>
               </tr>

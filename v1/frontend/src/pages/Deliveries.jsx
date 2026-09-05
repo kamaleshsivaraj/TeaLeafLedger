@@ -1,9 +1,14 @@
 import { useState, useEffect } from 'react';
 import { deliveryAPI } from '../api/client';
+import { usePermissions } from '../context/PermissionContext';
 import toast from 'react-hot-toast';
 import { Plus, Edit2, Trash2 } from 'lucide-react';
 
 export default function Deliveries() {
+  const { has } = usePermissions();
+  const canCreate = has('DELIVERIES', 'CREATE');
+  const canUpdate = has('DELIVERIES', 'UPDATE');
+  const canDelete = has('DELIVERIES', 'DELETE');
   const [deliveries, setDeliveries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -59,7 +64,7 @@ export default function Deliveries() {
           <h2 className="text-xl font-bold text-gray-900">Factory deliveries</h2>
           <p className="text-sm text-gray-500">Track dispatched leaf and weighbridge differences.</p>
         </div>
-        <button onClick={openAdd} className="btn-primary flex items-center gap-2"><Plus size={16} /> New delivery</button>
+        {canCreate && <button onClick={openAdd} className="btn-primary flex items-center gap-2"><Plus size={16} /> New delivery</button>}
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
@@ -98,8 +103,8 @@ export default function Deliveries() {
                   <td><span className={d.status === 'Reconciled' ? 'pill-green' : 'pill-amber'}>{d.status}</span></td>
                   <td>
                     <div className="flex items-center gap-2">
-                      <button onClick={() => openEdit(d)} className="p-1.5 rounded hover:bg-gray-100 text-gray-500"><Edit2 size={14} /></button>
-                      <button onClick={() => handleDelete(d.id)} className="p-1.5 rounded hover:bg-red-50 text-red-500"><Trash2 size={14} /></button>
+                      {canUpdate && <button onClick={() => openEdit(d)} className="p-1.5 rounded hover:bg-gray-100 text-gray-500"><Edit2 size={14} /></button>}
+                      {canDelete && <button onClick={() => handleDelete(d.id)} className="p-1.5 rounded hover:bg-red-50 text-red-500"><Trash2 size={14} /></button>}
                     </div>
                   </td>
                 </tr>

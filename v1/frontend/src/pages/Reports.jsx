@@ -1,9 +1,13 @@
 import { useState, useEffect } from 'react';
 import { reportAPI, farmerAPI } from '../api/client';
+import { usePermissions } from '../context/PermissionContext';
 import toast from 'react-hot-toast';
 import { Scale, Users, Truck, DollarSign, Printer } from 'lucide-react';
 
 export default function Reports() {
+  const { has, canView } = usePermissions();
+  const canPrint = has('REPORTS', 'PRINT');
+  const canViewFarmers = canView('FARMERS');
   const [from, setFrom] = useState('2026-08-01');
   const [to, setTo] = useState('2026-08-31');
   const [report, setReport] = useState(null);
@@ -13,8 +17,8 @@ export default function Reports() {
   const [selectedFarmer, setSelectedFarmer] = useState('');
 
   useEffect(() => {
-    farmerAPI.getAll().then(res => setFarmers(res.data || [])).catch(console.error);
-  }, []);
+    if (canViewFarmers) farmerAPI.getAll().then(res => setFarmers(res.data || [])).catch(console.error);
+  }, [canViewFarmers]);
 
   const money = (n) => `Rs. ${Number(n || 0).toLocaleString('en-LK', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
@@ -97,7 +101,7 @@ export default function Reports() {
               <h3 className="font-bold text-gray-900">{report.title || 'Report'}</h3>
               <p className="text-sm text-gray-500">{from} → {to}</p>
             </div>
-            <button onClick={() => window.print()} className="btn-secondary text-sm"><Printer size={14} className="inline mr-1" /> Print report</button>
+            {canPrint && <button onClick={() => window.print()} className="btn-secondary text-sm"><Printer size={14} className="inline mr-1" /> Print report</button>}
           </div>
 
           {reportType === 'collection' && (
