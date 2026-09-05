@@ -6,7 +6,6 @@ import { useTheme } from '../context/ThemeContext';
 import { notificationAPI } from '../api/client';
 
 const pageLabels = {
-  '/': { eyebrow: 'Good morning', title: 'Overview' },
   '/collection': { eyebrow: 'Collection desk', title: 'Daily collection' },
   '/farmers': { eyebrow: 'Supplier registry', title: 'Farmers' },
   '/deliveries': { eyebrow: 'Outbound reconciliation', title: 'Factory deliveries' },
@@ -14,6 +13,7 @@ const pageLabels = {
   '/finance': { eyebrow: 'Settlement centre', title: 'Payments & advances' },
   '/reports': { eyebrow: 'Insights', title: 'Reports' },
   '/account': { eyebrow: 'Profile & access', title: 'Account & security' },
+  '/users': { eyebrow: 'Team management', title: 'Users' },
 };
 
 const typePill = {
@@ -41,7 +41,16 @@ export default function Topbar({ onMenuClick }) {
   const bellRef = useRef(null);
 
   const path = window.location.pathname;
-  const labels = pageLabels[path] || pageLabels['/'];
+  const labels = pageLabels[path] || pageLabels['/collection'];
+
+  const firstName = (user?.name || '').trim().split(' ')[0] || 'there';
+
+  function greeting() {
+    const h = new Date().getHours();
+    if (h < 12) return 'Good morning';
+    if (h < 17) return 'Good afternoon';
+    return 'Good evening';
+  }
 
   useEffect(() => {
     notificationAPI.getAll().then((res) => setNotifications(res.data.data || res.data || []));
@@ -94,7 +103,9 @@ export default function Topbar({ onMenuClick }) {
       </button>
 
       <div className="flex-1">
-        <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">{labels.eyebrow}</p>
+        <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+          {path === '/' ? `${greeting()}, ${firstName}` : labels.eyebrow}
+        </p>
         <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">{labels.title}</h1>
       </div>
 
