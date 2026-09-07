@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { reportAPI, farmerAPI } from '../api/client';
 import { usePermissions } from '../context/PermissionContext';
 import toast from 'react-hot-toast';
 import { Scale, Users, Truck, DollarSign, Printer } from 'lucide-react';
+import PrintTemplate from '../components/PrintTemplate';
 
 export default function Reports() {
   const { has, canView } = usePermissions();
@@ -21,6 +23,20 @@ export default function Reports() {
   }, [canViewFarmers]);
 
   const money = (n) => `Rs. ${Number(n || 0).toLocaleString('en-LK', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+  const printReport = () => {
+    if (!report) return;
+    document.body.classList.add('print-report');
+    const pageSetup = document.createElement('style');
+    pageSetup.id = 'print-page-setup';
+    pageSetup.textContent = '@page { size: A4; margin: 15mm; }';
+    document.head.appendChild(pageSetup);
+    window.print();
+    setTimeout(() => {
+      document.body.classList.remove('print-report');
+      document.getElementById('print-page-setup')?.remove();
+    }, 300);
+  };
 
   const generate = async (type) => {
     setReportType(type);
@@ -101,7 +117,7 @@ export default function Reports() {
               <h3 className="font-bold text-gray-900">{report.title || 'Report'}</h3>
               <p className="text-sm text-gray-500">{from} → {to}</p>
             </div>
-            {canPrint && <button onClick={() => window.print()} className="btn-secondary text-sm"><Printer size={14} className="inline mr-1" /> Print report</button>}
+            {canPrint && <button onClick={printReport} className="btn-secondary text-sm"><Printer size={14} className="inline mr-1" /> Print report</button>}
           </div>
 
           {reportType === 'collection' && (
@@ -157,6 +173,12 @@ export default function Reports() {
 
           {report.error && <p className="text-red-600 text-sm">{report.error}</p>}
         </div>
+      )}
+      {createPortal(
+        <div className="print-only-report">
+          <PrintTemplate type={reportType} data={report} from={from} to={to} />
+        </div>,
+        document.getElementById('print-root')
       )}
     </div>
   );

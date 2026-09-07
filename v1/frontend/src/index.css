@@ -222,3 +222,145 @@
     display: none !important;
   }
 }
+
+/* ---------------------------------- */
+/* Report printing (A4)               */
+/* ---------------------------------- */
+.print-only-report {
+  display: none;
+}
+
+@media print {
+  body.print-report > #root {
+    display: none !important;
+  }
+
+  body.print-report > #print-root {
+    display: block !important;
+  }
+
+  body.print-report .print-only-report {
+    display: block !important;
+    color: #000;
+    background: #fff;
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    font-size: 11px;
+    line-height: 1.5;
+  }
+
+  body.print-report .print-only-report .rpt {
+    width: 100%;
+  }
+
+  body.print-report .print-only-report .rpt-header {
+    text-align: center;
+    margin-bottom: 8mm;
+    padding-bottom: 4mm;
+    border-bottom: 2px solid #047857;
+  }
+
+  body.print-report .print-only-report .rpt-logo {
+    font-size: 30px;
+    line-height: 1;
+    margin-bottom: 1mm;
+  }
+
+  body.print-report .print-only-report .rpt-org {
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: #047857;
+    margin: 0;
+  }
+
+  body.print-report .print-only-report .rpt-title {
+    font-size: 18px;
+    font-weight: 800;
+    margin: 1mm 0 0;
+  }
+
+  body.print-report .print-only-report .rpt-subtitle {
+    font-size: 10px;
+    color: #555;
+    margin: 1mm 0 0;
+  }
+
+  body.print-report .print-only-report .rpt-stats {
+    display: flex;
+    gap: 4mm;
+    margin: 5mm 0;
+  }
+
+  body.print-report .print-only-report .rpt-stat {
+    flex: 1;
+    border: 1px solid #ddd;
+    border-radius: 2mm;
+    padding: 2.5mm;
+    text-align: center;
+    background: #fafafa;
+  }
+
+  body.print-report .print-only-report .rpt-stat-label {
+    font-size: 9px;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  body.print-report .print-only-report .rpt-stat-value {
+    font-size: 14px;
+    font-weight: 800;
+    color: #047857;
+  }
+
+  body.print-report .print-only-report table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  body.print-report .print-only-report th,
+  body.print-report .print-only-report td {
+    border: 1px solid #ddd;
+    padding: 2mm 2.5mm;
+    font-size: 10px;
+    text-align: left;
+  }
+
+  body.print-report .print-only-report th {
+    background: #f0fdf4;
+    font-weight: 700;
+    color: #065f46;
+  }
+
+  body.print-report .print-only-report tr:nth-child(even) td {
+    background: #fcfcfc;
+  }
+
+  body.print-report .print-only-report .rpt-right {
+    text-align: right;
+  }
+
+  body.print-report .print-only-report .rpt-center {
+    text-align: center;
+    color: #888;
+  }
+
+  body.print-report .print-only-report .rpt-variance-pos {
+    color: #16a34a;
+    font-weight: 600;
+  }
+
+  body.print-report .print-only-report .rpt-variance-neg {
+    color: #dc2626;
+    font-weight: 600;
+  }
+
+  body.print-report .print-only-report .rpt-footer {
+    margin-top: 8mm;
+    padding-top: 3mm;
+    border-top: 1px solid #eee;
+    text-align: center;
+    font-size: 9px;
+    color: #999;
+  }
+}

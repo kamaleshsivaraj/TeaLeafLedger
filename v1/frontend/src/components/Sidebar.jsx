@@ -38,9 +38,6 @@ export default function Sidebar({ open, onClose }) {
           <div>
             <span className="font-bold text-gray-900 dark:text-gray-100 text-sm">TeaLeafLedger</span>
             <span className="block text-[10px] text-gray-500">Collection Centre</span>
-          <div className='mt-3'>
-            <DayStatus />
-          </div>
           </div>
           <button onClick={onClose} className="ml-auto lg:hidden p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800"><X size={18} /></button>
         </div>
@@ -61,6 +58,7 @@ export default function Sidebar({ open, onClose }) {
         </nav>
 
         <div className="px-5 py-4 border-t border-gray-100 dark:border-gray-800">
+            <DayStatus  />
           <p className="text-[11px] text-gray-400">{today} · Centre 01</p>
           <p className="text-[10px] text-gray-400 mt-2">© 2026 <strong>Kamalesh Sivaraj</strong></p>
         </div>

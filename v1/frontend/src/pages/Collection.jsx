@@ -359,6 +359,20 @@ export default function Collection() {
     </div>
   );
 
+  // clear form button to clear all the form fields and reset the state
+  const clearForm = () => {
+    clearFarmer();
+    setBagCount(0);
+    setBagWeights([]);
+    setWaterTare(0);
+    setOtherTare(0);
+    setGrade(GRADES[0]);
+    setTaxMode('none');
+    setCgst(0);
+    setSgst(0);
+    setIgst(0);
+  };
+
   return (
     <div className="space-y-6 receipt-print-area">
       <div className="flex items-center justify-between">
@@ -402,6 +416,7 @@ export default function Collection() {
                     <button key={f.id} type="button" onClick={() => selectFarmer(f)} className="w-full text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-100 last:border-0">
                       <p className="text-sm font-medium text-gray-900">{f.name}</p>
                       <p className="text-xs text-gray-500">{f.code} · {f.phone} · {f.division}</p>
+                      <span className={f.status === "ACTIVE" ? 'pill-green' : 'pill-red'}>{f.status === "ACTIVE" ? 'Active' : 'INACTIVE'}</span>
                     </button>
                   ))}
                 </div>
@@ -416,6 +431,7 @@ export default function Collection() {
                 <div className="flex-1">
                   <p className="text-sm font-medium text-gray-900">{selectedFarmer.name}</p>
                   <p className="text-xs text-gray-500">{selectedFarmer.code} · {selectedFarmer.division}</p>
+                  <span className={selectedFarmer.status === "ACTIVE" ? 'pill-green' : 'pill-red'}>{selectedFarmer.status === "ACTIVE" ? 'Active' : 'INACTIVE'}</span>
                 </div>
                 <span className="text-xs font-medium px-2 py-1 rounded-full bg-gray-100 text-gray-700">
                   Advance outstanding: {money(outstanding)}
@@ -545,14 +561,28 @@ export default function Collection() {
                 <p className="mt-2 text-sm text-gray-600">Tax on {money(baseAmount)} = <strong className="text-gray-900">{money(taxTotal)}</strong></p>
               )}
             </div>
-
+            
             {canCreate ? (
-              <button type="submit" disabled={loading || !selectedFarmer} className="w-full btn-primary py-2.5">
-                {loading ? 'Saving...' : 'Save collection & issue receipt →'}
+              <button type="submit" disabled={loading || !selectedFarmer || selectedFarmer.status !== "ACTIVE"} 
+              className={loading ? "w-full btn-primary py-2.5" : selectedFarmer && selectedFarmer.status === "ACTIVE" ? "w-full btn-primary py-2.5" : "w-full btn-primary py-2.5 bg-gray-400 hover:bg-gray-500 cursor-not-allowed" }>
+                {loading
+                  ? 'Saving...'
+                  : selectedFarmer
+                    ? selectedFarmer.status === "ACTIVE"
+                      ? 'Save collection & issue receipt →'
+                      : 'Farmer is inactive'
+                    : 'Select a supplier to enable saving'}
               </button>
             ) : (
-              <p className="text-center text-sm text-gray-400 bg-gray-50 rounded-lg py-3">You have read-only access — recording collections is not enabled for your role.</p>
+              <p className="text-center text-sm text-gray-400 bg-gray-50 hover:bg-gray-100 rounded-lg py-3">You have read-only access — recording collections is not enabled for your role.</p>
             )}
+            <button
+              type="button"
+              onClick={clearForm}
+              className="w-full btn-secondary py-2.5 mt-2"
+            >
+              Clear Form
+            </button>
           </div>
         </form>
 

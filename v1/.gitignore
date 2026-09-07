@@ -15,6 +15,9 @@ frontend/dist/
 frontend/.vite/
 frontend/node_modules/.vite/
 
+# playwrite
+playwright-results/
+
 # OS
 .DS_Store
 Thumbs.db

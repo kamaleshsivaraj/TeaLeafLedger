@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@latest",
+        "--caps=vision,devtools,pdf",
+        "--browser=msedge",
+        "--output-dir=C:/Users/Kamalesh Sivaraj/Projects/TeaLeafLedger/v1/playwright-results"
+      ]
+    }
+  }
+}

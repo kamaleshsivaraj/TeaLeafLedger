@@ -1,0 +1,10 @@
+{
+  "name": "tealeafledger-e2e",
+  "author": { "name": "Kamalesh Sivaraj" , "email": "kamaleshsivaraj@outlook.com" },
+  "license": "MIT",
+  "description": "Frontend for Tea Leaf Ledger",
+  "private": true,
+  "devDependencies": {
+    "@playwright/test": "^1.53.0"
+  }
+}

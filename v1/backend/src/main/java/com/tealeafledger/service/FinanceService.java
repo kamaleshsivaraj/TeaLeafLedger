@@ -51,9 +51,13 @@ public class FinanceService {
     public Advance updateAdvance(Long id, Advance details) {
         Advance advance = advanceRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Advance", id));
-        advance.setFarmerId(details.getFarmerId());
-        advance.setFarmer(details.getFarmer());
-        advance.setCode(details.getCode());
+        if (details.getFarmerId() != null) {
+            Farmer farmer = farmerRepository.findById(details.getFarmerId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Farmer", details.getFarmerId()));
+            advance.setFarmerId(farmer.getId());
+            advance.setFarmer(farmer.getName());
+            advance.setCode(farmer.getCode());
+        }
         advance.setDate(details.getDate());
         advance.setAmount(details.getAmount());
         advance.setNotes(details.getNotes());
@@ -91,9 +95,13 @@ public class FinanceService {
     public Payment updatePayment(Long id, Payment details) {
         Payment payment = paymentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Payment", id));
-        payment.setFarmerId(details.getFarmerId());
-        payment.setFarmer(details.getFarmer());
-        payment.setCode(details.getCode());
+        if (details.getFarmerId() != null) {
+            Farmer farmer = farmerRepository.findById(details.getFarmerId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Farmer", details.getFarmerId()));
+            payment.setFarmerId(farmer.getId());
+            payment.setFarmer(farmer.getName());
+            payment.setCode(farmer.getCode());
+        }
         payment.setDate(details.getDate());
         payment.setAmount(details.getAmount());
         payment.setNotes(details.getNotes());
@@ -148,6 +156,7 @@ public class FinanceService {
                 row.put("id", a.getId());
                 row.put("type", "advance");
                 row.put("label", "Advance");
+                row.put("farmerId", a.getFarmerId());
                 row.put("farmer", a.getFarmer());
                 row.put("code", a.getCode());
                 row.put("date", a.getDate());
@@ -163,6 +172,7 @@ public class FinanceService {
                 row.put("id", p.getId());
                 row.put("type", "payment");
                 row.put("label", "Payment");
+                row.put("farmerId", p.getFarmerId());
                 row.put("farmer", p.getFarmer());
                 row.put("code", p.getCode());
                 row.put("date", p.getDate());

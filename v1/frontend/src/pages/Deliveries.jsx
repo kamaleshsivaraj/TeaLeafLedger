@@ -15,6 +15,8 @@ export default function Deliveries() {
   const [statusFilter, setStatusFilter] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [editDelivery, setEditDelivery] = useState(null);
+  const [deleting, setDeleting] = useState(null);
+  const [deleteBusy, setDeleteBusy] = useState(false);
   const [form, setForm] = useState({ number: '', factory: 'Kelani Valley Tea Factory', date: new Date().toISOString().slice(0, 10), sent: '', factoryWeight: '', status: 'Awaiting factory weight' });
 
   useEffect(() => { loadDeliveries(); }, [search, statusFilter]);
@@ -51,9 +53,10 @@ export default function Deliveries() {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm('Delete this delivery?')) return;
-    try { await deliveryAPI.delete(id); toast.success('Delivery deleted'); loadDeliveries(); } catch { toast.error('Failed to delete'); }
+  const confirmDelete = async () => {
+    if (!deleting) return;
+    setDeleteBusy(true);
+    try { await deliveryAPI.delete(deleting.id); toast.success('Delivery deleted'); setDeleting(null); loadDeliveries(); } catch { toast.error('Failed to delete'); } finally { setDeleteBusy(false); }
   };
 
   return (
@@ -104,7 +107,7 @@ export default function Deliveries() {
                   <td>
                     <div className="flex items-center gap-2">
                       {canUpdate && <button onClick={() => openEdit(d)} className="p-1.5 rounded hover:bg-gray-100 text-gray-500"><Edit2 size={14} /></button>}
-                      {canDelete && <button onClick={() => handleDelete(d.id)} className="p-1.5 rounded hover:bg-red-50 text-red-500"><Trash2 size={14} /></button>}
+                      {canDelete && <button onClick={() => setDeleting(d)} title="Delete delivery" className="p-1.5 rounded hover:bg-red-50 text-red-500"><Trash2 size={14} /></button>}
                     </div>
                   </td>
                 </tr>
@@ -140,6 +143,20 @@ export default function Deliveries() {
                 <button type="submit" className="flex-1 btn-primary">{editDelivery ? 'Update' : 'Save'}</button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+    {deleting && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={() => setDeleting(null)}>
+          <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
+            <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-2">Delete delivery</h3>
+            <p className="text-sm text-gray-500 mb-4">
+              Are you sure you want to delete delivery <strong className="text-gray-900 dark:text-gray-100">{deleting.number}</strong> ({deleting.date})? This cannot be undone.
+            </p>
+            <div className="flex gap-2 justify-end">
+              <button onClick={() => setDeleting(null)} className="btn-secondary text-sm">Cancel</button>
+              <button onClick={confirmDelete} disabled={deleteBusy} className="btn-danger text-sm">{deleteBusy ? 'Deleting...' : 'Delete'}</button>
+            </div>
           </div>
         </div>
       )}

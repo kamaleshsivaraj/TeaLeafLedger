@@ -13,6 +13,8 @@ export default function Rates() {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editRate, setEditRate] = useState(null);
+  const [deleting, setDeleting] = useState(null);
+  const [deleteBusy, setDeleteBusy] = useState(false);
   const [form, setForm] = useState({ grade: 'Standard green leaf', amount: '', effective: new Date().toISOString().slice(0, 10), active: true });
 
   useEffect(() => { loadRates(); }, []);
@@ -55,9 +57,10 @@ export default function Rates() {
     }
   };
 
-  const handleDelete = async (id, grade) => {
-    if (!confirm(`Delete the ${grade} rate?`)) return;
-    try { await rateAPI.delete(id); toast.success('Rate deleted'); loadRates(); } catch { toast.error('Failed to delete'); }
+  const confirmDelete = async () => {
+    if (!deleting) return;
+    setDeleteBusy(true);
+    try { await rateAPI.delete(deleting.id); toast.success('Rate deleted'); setDeleting(null); loadRates(); } catch { toast.error('Failed to delete'); } finally { setDeleteBusy(false); }
   };
 
   const handleReset = async () => {
@@ -117,7 +120,7 @@ export default function Rates() {
                 <td>
                   <div className="flex items-center gap-2">
                     {canUpdate && <button onClick={() => openEdit(r)} className="p-1.5 rounded hover:bg-gray-100 text-gray-500"><Edit2 size={14} /></button>}
-                    {canDelete && <button onClick={() => handleDelete(r.id, r.grade)} className="p-1.5 rounded hover:bg-red-50 text-red-500"><Trash2 size={14} /></button>}
+                    {canDelete && <button onClick={() => setDeleting(r)} title="Delete rate" className="p-1.5 rounded hover:bg-red-50 text-red-500"><Trash2 size={14} /></button>}
                   </div>
                 </td>
               </tr>
@@ -154,6 +157,20 @@ export default function Rates() {
                 <button type="submit" className="flex-1 btn-primary">{editRate ? 'Update' : 'Save rate'}</button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+    {deleting && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={() => setDeleting(null)}>
+          <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
+            <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-2">Delete rate</h3>
+            <p className="text-sm text-gray-500 mb-4">
+              Are you sure you want to delete the <strong className="text-gray-900 dark:text-gray-100">{deleting.grade}</strong> rate ({money(deleting.amount)})? This cannot be undone.
+            </p>
+            <div className="flex gap-2 justify-end">
+              <button onClick={() => setDeleting(null)} className="btn-secondary text-sm">Cancel</button>
+              <button onClick={confirmDelete} disabled={deleteBusy} className="btn-danger text-sm">{deleteBusy ? 'Deleting...' : 'Delete'}</button>
+            </div>
           </div>
         </div>
       )}

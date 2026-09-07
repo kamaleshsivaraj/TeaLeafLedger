@@ -121,6 +121,21 @@ npm run dev
 
 Frontend runs on `http://localhost:5183`
 
+## Tests for UI test playwright
+```
+cd v1/e2e && ./run-ui-checks.sh chrome  # Chrome only
+```
+```
+cd v1/e2e && ./run-ui-checks.sh        # all 3 browsers
+```
+
+Open it in your browser to see the visual dashboard with pass/fail status, screenshots, videos, and traces for every test.
+To view it:
+# Windows - opens in default browser
+```
+start v1/playwright-results/html-report/index.html
+```
+
 ## API Endpoints
 
 ### Authentication

@@ -18,6 +18,8 @@ export default function Finance() {
   const [formType, setFormType] = useState('advance');
   const [editRecord, setEditRecord] = useState(null);
   const [form, setForm] = useState({ farmerId: '', date: new Date().toISOString().slice(0, 10), amount: '', notes: '' });
+  const [deleting, setDeleting] = useState(null);
+  const [deleteBusy, setDeleteBusy] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => { loadData(); }, []);
@@ -75,14 +77,16 @@ export default function Finance() {
     }
   };
 
-  const handleDelete = async (type, id) => {
-    if (!confirm(`Delete this ${type}?`)) return;
+  const confirmDelete = async () => {
+    if (!deleting) return;
+    setDeleteBusy(true);
     try {
-      if (type === 'advance') await financeAPI.deleteAdvance(id);
-      else await financeAPI.deletePayment(id);
+      if (deleting.type === 'advance') await financeAPI.deleteAdvance(deleting.id);
+      else await financeAPI.deletePayment(deleting.id);
       toast.success('Deleted');
+      setDeleting(null);
       loadData();
-    } catch { toast.error('Failed to delete'); }
+    } catch { toast.error('Failed to delete'); } finally { setDeleteBusy(false); }
   };
 
   return (
@@ -143,7 +147,7 @@ export default function Finance() {
                 <td>
                   <div className="flex items-center gap-2">
                     {canUpdate && <button onClick={() => { setFormType(r.type); setEditRecord(r); setForm({ farmerId: r.farmerId || '', date: r.date, amount: r.amount, notes: '' }); setShowForm(true); }} className="p-1.5 rounded hover:bg-gray-100 text-gray-500"><Edit2 size={14} /></button>}
-                    {canDelete && <button onClick={() => handleDelete(r.type, r.id)} className="p-1.5 rounded hover:bg-red-50 text-red-500"><Trash2 size={14} /></button>}
+                    {canDelete && <button onClick={() => setDeleting(r)} title="Delete transaction" className="p-1.5 rounded hover:bg-red-50 text-red-500"><Trash2 size={14} /></button>}
                   </div>
                 </td>
               </tr>
@@ -176,6 +180,21 @@ export default function Finance() {
                 <button type="submit" className="flex-1 btn-primary">{editRecord ? 'Update' : 'Save'}</button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {deleting && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={() => setDeleting(null)}>
+          <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
+            <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-2">Delete {deleting.type === 'advance' ? 'advance' : 'payment'}</h3>
+            <p className="text-sm text-gray-500 mb-4">
+              Are you sure you want to delete this {deleting.type} for <strong className="text-gray-900 dark:text-gray-100">{deleting.farmer}</strong> ({deleting.label}, {money(deleting.amount)})? This cannot be undone.
+            </p>
+            <div className="flex gap-2 justify-end">
+              <button onClick={() => setDeleting(null)} className="btn-secondary text-sm">Cancel</button>
+              <button onClick={confirmDelete} disabled={deleteBusy} className="btn-danger text-sm">{deleteBusy ? 'Deleting...' : 'Delete'}</button>
+            </div>
           </div>
         </div>
       )}
