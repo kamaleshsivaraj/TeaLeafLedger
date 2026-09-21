@@ -15,6 +15,7 @@ import Reports from './pages/Reports';
 import Account from './pages/Account';
 import Users from './pages/Users';
 import Privileges from './pages/Privileges';
+import Landing from './pages/Landing';
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -39,6 +40,7 @@ function PublicRoute({ children }) {
 export default function App() {
   return (
     <Routes>
+      <Route path="/landing" element={<PublicRoute><Landing /></PublicRoute>} />
       <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
       <Route path="/signup" element={<PublicRoute><Signup /></PublicRoute>} />
       <Route path="/forgot-password" element={<PublicRoute><ForgotPassword /></PublicRoute>} />
