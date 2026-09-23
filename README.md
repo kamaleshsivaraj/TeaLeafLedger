@@ -10,7 +10,7 @@ Collection Centre Management System — a production-grade, full-stack applicati
 |---|---|
 | **Name** | Kamalesh Sivaraj |
 | **Email** | [kamaleshsivaraj@outlook.com](mailto:kamaleshsivaraj@outlook.com) |
-| **Website** | [https://kamaleshsivaraj.dev](https://kamaleshsivaraj.dev) |
+| **Website** | [https://kamaleshsivaraj.dev](https://kamaleshsivaraj.vercel.app) |
 
 ---
 
